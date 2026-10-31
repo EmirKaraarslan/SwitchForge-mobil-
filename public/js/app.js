@@ -141,9 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const downloadCard = document.getElementById('download-card');
   const downloadFileName = document.getElementById('download-file-name');
-  const btnDownloadLink = document.getElementById('btn-download-link');
+  const btnSaveFile = document.getElementById('btn-save-file');
   const btnConvAnother = document.getElementById('btn-conv-another');
   const btnConvHome = document.getElementById('btn-conv-home');
+
+  let currentDownloadUrl = '';
+  let currentDownloadName = '';
 
   const historyContainer = document.getElementById('history-container');
   const btnClearHistory = document.getElementById('btn-clear-history');
@@ -517,26 +520,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   }
 
+  async function saveOrShareFile(downloadUrl, fileName) {
+    if (!downloadUrl) return;
+    showToast('Dosya hazırlanıyor...', 'info');
+
+    try {
+      const response = await fetch(downloadUrl);
+      const blob = await response.blob();
+      const file = new File([blob], fileName, { type: blob.type || 'application/octet-stream' });
+
+      // iOS Native Share Sheet -> Direct "Save to Files" (Dosyalara Kaydet) support!
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: fileName
+        });
+        showToast('Dosya başarıyla paylaşıldı/kaydedildi!', 'success');
+        return;
+      }
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        console.warn('Native share failed, using fallback download:', err);
+      } else {
+        return; // User dismissed share sheet
+      }
+    }
+
+    // Fallback: standard anchor download
+    const tempA = document.createElement('a');
+    tempA.href = downloadUrl;
+    tempA.setAttribute('download', fileName);
+    document.body.appendChild(tempA);
+    tempA.click();
+    tempA.remove();
+  }
+
+  if (btnSaveFile) {
+    btnSaveFile.addEventListener('click', () => {
+      saveOrShareFile(currentDownloadUrl, currentDownloadName);
+    });
+  }
+
   function showDownloadCard(downloadUrl, fileName) {
+    currentDownloadUrl = downloadUrl;
+    currentDownloadName = fileName;
+
     downloadCard.style.display = 'flex';
     downloadFileName.textContent = fileName;
-    btnDownloadLink.href = downloadUrl;
-    btnDownloadLink.setAttribute('download', fileName);
     downloadCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-    // Auto-trigger native download on iPhone Safari
+    // Automatically prompt iPhone Native Share / Save
     setTimeout(() => {
-      try {
-        const autoLink = document.createElement('a');
-        autoLink.href = downloadUrl;
-        autoLink.setAttribute('download', fileName);
-        document.body.appendChild(autoLink);
-        autoLink.click();
-        autoLink.remove();
-      } catch (e) {
-        console.error('Auto download trigger error:', e);
-      }
-    }, 400);
+      saveOrShareFile(downloadUrl, fileName);
+    }, 500);
   }
 
   // Local History Management
