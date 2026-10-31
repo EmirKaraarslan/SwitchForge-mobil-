@@ -49,7 +49,7 @@ router.post('/', upload.array('files', 50), async (req, res) => {
     // 1. PDF Birleştir (Merge)
     if (type === 'merge-pdf') {
       const pdfPaths = files.map((f) => f.path);
-      resultFileName = `Birlesik_PDF_${Date.now()}.pdf`;
+      resultFileName = `[PDF_BIRLESIK]_Birlesik_PDF_${Date.now()}.pdf`;
       resultFilePath = path.join(sessionDir, resultFileName);
       mimeType = 'application/pdf';
       await mergePdfs(pdfPaths, resultFilePath);
@@ -59,7 +59,7 @@ router.post('/', upload.array('files', 50), async (req, res) => {
     else if (type === 'split-pdf') {
       const pdfPath = files[0].path;
       const baseName = path.basename(files[0].originalname, path.extname(files[0].originalname));
-      resultFileName = `${baseName}_Parcalari.zip`;
+      resultFileName = `[PDF_PARCA]_${baseName}_Sayfalari.zip`;
       resultFilePath = path.join(sessionDir, resultFileName);
       mimeType = 'application/zip';
       await splitPdfToZip(pdfPath, resultFilePath);
@@ -73,14 +73,14 @@ router.post('/', upload.array('files', 50), async (req, res) => {
       if (['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) {
         // Multi or single images to PDF
         const imgPaths = files.map((f) => f.path);
-        resultFileName = `${baseName}_Belge.pdf`;
+        resultFileName = `[PDF]_${baseName}_Belge.pdf`;
         resultFilePath = path.join(sessionDir, resultFileName);
         mimeType = 'application/pdf';
         await imagesToPdf(imgPaths, resultFilePath);
       } else if (['.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.odt', '.rtf'].includes(ext)) {
         // Office to PDF via LibreOffice
         resultFilePath = await convertWithLibreOffice(files[0].path, sessionDir, 'pdf');
-        resultFileName = `${baseName}.pdf`;
+        resultFileName = `[PDF]_${baseName}.pdf`;
         mimeType = 'application/pdf';
       } else {
         throw new Error(`Desteklenmeyen dosya formatı: ${ext}`);
@@ -91,7 +91,7 @@ router.post('/', upload.array('files', 50), async (req, res) => {
     else if (type === 'to-word') {
       const baseName = path.basename(files[0].originalname, path.extname(files[0].originalname));
       resultFilePath = await convertWithLibreOffice(files[0].path, sessionDir, 'docx');
-      resultFileName = `${baseName}.docx`;
+      resultFileName = `[WORD]_${baseName}.docx`;
       mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
     }
 
@@ -99,7 +99,7 @@ router.post('/', upload.array('files', 50), async (req, res) => {
     else if (type === 'to-excel') {
       const baseName = path.basename(files[0].originalname, path.extname(files[0].originalname));
       resultFilePath = await convertWithLibreOffice(files[0].path, sessionDir, 'xlsx');
-      resultFileName = `${baseName}.xlsx`;
+      resultFileName = `[EXCEL]_${baseName}.xlsx`;
       mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     }
 
@@ -107,7 +107,7 @@ router.post('/', upload.array('files', 50), async (req, res) => {
     else if (type === 'to-ppt') {
       const baseName = path.basename(files[0].originalname, path.extname(files[0].originalname));
       resultFilePath = await convertWithLibreOffice(files[0].path, sessionDir, 'pptx');
-      resultFileName = `${baseName}.pptx`;
+      resultFileName = `[PPT]_${baseName}.pptx`;
       mimeType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
     }
 
@@ -115,14 +115,14 @@ router.post('/', upload.array('files', 50), async (req, res) => {
     else if (type === 'to-pdfa') {
       const baseName = path.basename(files[0].originalname, path.extname(files[0].originalname));
       resultFilePath = await convertWithLibreOffice(files[0].path, sessionDir, 'pdfa');
-      resultFileName = `${baseName}_PDFA.pdf`;
+      resultFileName = `[PDFA]_${baseName}.pdf`;
       mimeType = 'application/pdf';
     }
 
     // 8. PDF -> JPG Resimler
     else if (type === 'to-jpg') {
       const baseName = path.basename(files[0].originalname, path.extname(files[0].originalname));
-      resultFileName = `${baseName}_Resimleri.zip`;
+      resultFileName = `[JPG]_${baseName}_Resimleri.zip`;
       resultFilePath = path.join(sessionDir, resultFileName);
       mimeType = 'application/zip';
       await pdfToImagesZip(files[0].path, sessionDir, resultFilePath);
@@ -131,7 +131,7 @@ router.post('/', upload.array('files', 50), async (req, res) => {
     // 9. Videodan Ses Çıkar (MP4 -> MP3)
     else if (type === 'mp4-to-mp3') {
       const baseName = path.basename(files[0].originalname, path.extname(files[0].originalname));
-      resultFileName = `${baseName}.mp3`;
+      resultFileName = `[MP3]_${baseName}.mp3`;
       resultFilePath = path.join(sessionDir, resultFileName);
       mimeType = 'audio/mpeg';
       await extractAudioToMp3(files[0].path, resultFilePath);

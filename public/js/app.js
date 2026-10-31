@@ -142,6 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const downloadCard = document.getElementById('download-card');
   const downloadFileName = document.getElementById('download-file-name');
   const btnDownloadLink = document.getElementById('btn-download-link');
+  const btnConvAnother = document.getElementById('btn-conv-another');
+  const btnConvHome = document.getElementById('btn-conv-home');
 
   const historyContainer = document.getElementById('history-container');
   const btnClearHistory = document.getElementById('btn-clear-history');
@@ -181,11 +183,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  btnBackHome.addEventListener('click', () => {
+  function goHome() {
     resetConverter();
     navBtns.forEach((b) => b.classList.remove('active'));
     navBtns[0].classList.add('active');
     switchView('home');
+  }
+
+  btnBackHome.addEventListener('click', goHome);
+
+  if (btnConvHome) {
+    btnConvHome.addEventListener('click', goHome);
+  }
+
+  if (btnConvAnother) {
+    btnConvAnother.addEventListener('click', () => {
+      if (currentToolKey) {
+        openTool(currentToolKey);
+      } else {
+        goHome();
+      }
+    });
+  }
+
+  // Handle iOS swipe back & browser back button
+  window.addEventListener('popstate', () => {
+    goHome();
   });
 
   // Open Converter Tool
@@ -202,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     currentToolKey = toolKey;
     resetConverter();
+
+    try {
+      history.pushState({ page: 'converter', tool: toolKey }, '');
+    } catch (e) {}
 
     convHeading.textContent = config.title;
     convSubheading.textContent = config.sub;
@@ -496,6 +523,20 @@ document.addEventListener('DOMContentLoaded', () => {
     btnDownloadLink.href = downloadUrl;
     btnDownloadLink.setAttribute('download', fileName);
     downloadCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Auto-trigger native download on iPhone Safari
+    setTimeout(() => {
+      try {
+        const autoLink = document.createElement('a');
+        autoLink.href = downloadUrl;
+        autoLink.setAttribute('download', fileName);
+        document.body.appendChild(autoLink);
+        autoLink.click();
+        autoLink.remove();
+      } catch (e) {
+        console.error('Auto download trigger error:', e);
+      }
+    }, 400);
   }
 
   // Local History Management
