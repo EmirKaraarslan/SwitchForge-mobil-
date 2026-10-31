@@ -1,0 +1,35 @@
+:root {
+  /* SwitchForge Theme Variables */
+  --bg-base: #0F111A;
+  --bg-surface: #141724;
+  --bg-card: rgba(28, 31, 43, 0.75);
+  --bg-card-hover: rgba(35, 39, 54, 0.9);
+  --bg-card-active: rgba(45, 50, 70, 0.95);
+  
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --text-muted: #64748B;
+  
+  --accent-primary: #6366F1;   /* Indigo */
+  --accent-secondary: #8B5CF6; /* Violet */
+  --accent-cyan: #0EA5E9;      /* Sky */
+  --accent-success: #10B981;   /* Emerald */
+  --accent-error: #EF4444;     /* Red */
+  
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-active: rgba(99, 102, 241, 0.6);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --glass-blur: blur(16px);
+  
+  --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* iPhone Notch & Home Bar Safe Areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 16px);
+}

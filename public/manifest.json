@@ -1,0 +1,22 @@
+{
+  "name": "SwitchForge",
+  "short_name": "SwitchForge",
+  "description": "Modern dosya dönüştürücü ve medya indirme istasyonu.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F111A",
+  "theme_color": "#0F111A",
+  "icons": [
+    {
+      "src": "/assets/icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
