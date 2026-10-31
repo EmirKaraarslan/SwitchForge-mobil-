@@ -1,16 +1,12 @@
 # Use official Node.js runtime based on Debian Bookworm
 FROM node:20-bookworm-slim
 
-# Install system dependencies: LibreOffice, poppler-utils, ffmpeg, python3, fonts & curl
+# Install system dependencies: LibreOffice headless, poppler-utils, ffmpeg, python3, fonts & curl
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libreoffice-writer \
-    libreoffice-calc \
-    libreoffice-impress \
     libreoffice-nogui \
     poppler-utils \
     ffmpeg \
     python3 \
-    python3-pip \
     ca-certificates \
     curl \
     fonts-dejavu \
@@ -32,7 +28,7 @@ RUN npm install --omit=dev
 # Copy application source code
 COPY . .
 
-# Ensure temp directory exists and has right permissions
+# Ensure temp directory exists
 RUN mkdir -p /app/temp_storage
 
 # Port definition
